@@ -33,11 +33,11 @@ Define your mapping between local Git files and Google Doc IDs:
 ```yaml
 documents:
   - file: "motions/foss-sustainability-motion.md"
-    doc_id: "1HkhevBBy-TXIHW9qER6O-MAjqvveQygmYKnAoSsUHKs"
+    doc_id: "1A2B3C4D5E6F7G8H9I0J-sample-id"
     title: "Volt FOSS Sustainability Policy"
 
   - file: "policy/digitales/01-infrastruktur.md"
-    doc_id: "1wZ-igWfzspb3FzhmrSuXxFPvXrF7CUsB5IbQ15JHCSQ"
+    doc_id: "1K2L3M4N5O6P7Q8R9S0T-sample-id"
     title: "Digitale Infrastruktur als Daseinsvorsorge"
 ```
 
