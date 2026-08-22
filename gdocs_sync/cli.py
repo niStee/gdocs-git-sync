@@ -1,30 +1,39 @@
+import argparse
 import os
 import sys
-import argparse
-from .config import load_config
+
 from .client import GoogleDocsClient
+from .config import load_config
 from .sync import SyncManager
+
 
 def main():
     parser = argparse.ArgumentParser(
         prog="gdocs-sync",
-        description="Bi-directional synchronization between Google Docs and Git Markdown (Docs-as-Code)."
+        description="Bi-directional synchronization between Google Docs and Git Markdown (Docs-as-Code).",
     )
     parser.add_argument(
-        "-c", "--config",
+        "-c",
+        "--config",
         default="docs-sync.yaml",
-        help="Path to docs-sync.yaml configuration file (default: docs-sync.yaml)"
+        help="Path to docs-sync.yaml configuration file (default: docs-sync.yaml)",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # 1. status
-    subparsers.add_parser("status", help="Check sync status and last modified timestamps of mapped documents")
+    subparsers.add_parser(
+        "status", help="Check sync status and last modified timestamps of mapped documents"
+    )
 
     # 2. pull
-    subparsers.add_parser("pull", help="Pull latest content from Google Docs and write to local Git Markdown files")
+    subparsers.add_parser(
+        "pull", help="Pull latest content from Google Docs and write to local Git Markdown files"
+    )
 
     # 3. diff
-    subparsers.add_parser("diff", help="Show differences between local Git Markdown and remote Google Docs")
+    subparsers.add_parser(
+        "diff", help="Show differences between local Git Markdown and remote Google Docs"
+    )
 
     args = parser.parse_args()
 
@@ -46,7 +55,11 @@ def main():
                 doc = s["doc"]
                 exists_str = "✅ Local Exists" if s["local_exists"] else "❌ Local Missing"
                 r_meta = s["remote_meta"]
-                mod_time = r_meta.get("modifiedTime", "Unknown") if "error" not in r_meta else f"Error: {r_meta['error']}"
+                mod_time = (
+                    r_meta.get("modifiedTime", "Unknown")
+                    if "error" not in r_meta
+                    else f"Error: {r_meta['error']}"
+                )
                 print(f"📄 {doc.title}")
                 print(f"   Local:  {doc.file} ({exists_str})")
                 print(f"   Remote: {doc.url}")
@@ -55,7 +68,9 @@ def main():
         elif args.command == "diff":
             diffs = mgr.diff()
             if not diffs:
-                print("✅ Everything is up to date! Zero differences between local Git and Google Docs.")
+                print(
+                    "✅ Everything is up to date! Zero differences between local Git and Google Docs."
+                )
             else:
                 print(f"⚠️ Found differences in {len(diffs)} document(s):\n")
                 for fpath, dtext in diffs.items():
@@ -73,6 +88,7 @@ def main():
     except Exception as e:
         print(f"❌ Error: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

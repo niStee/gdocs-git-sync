@@ -1,6 +1,7 @@
-from typing import Dict, Any, List
+from typing import Any
 
-def _element_to_text(elem: Dict[str, Any]) -> str:
+
+def _element_to_text(elem: dict[str, Any]) -> str:
     text_run = elem.get("textRun")
     if not text_run:
         return ""
@@ -34,11 +35,12 @@ def _element_to_text(elem: Dict[str, Any]) -> str:
 
     return text + trailing_newlines
 
-def doc_to_markdown(doc: Dict[str, Any]) -> str:
+
+def doc_to_markdown(doc: dict[str, Any]) -> str:
     body = doc.get("body", {})
     content = body.get("content", [])
 
-    lines: List[str] = []
+    lines: list[str] = []
 
     for item in content:
         para = item.get("paragraph")
@@ -62,9 +64,7 @@ def doc_to_markdown(doc: Dict[str, Any]) -> str:
             lines.append(f"# {clean_text}")
         elif style_type == "HEADING_2":
             lines.append(f"## {clean_text}")
-        elif style_type == "HEADING_3":
-            lines.append(f"### {clean_text}")
-        elif style_type == "HEADING_4":
+        elif style_type == "HEADING_3" or style_type == "HEADING_4":
             lines.append(f"### {clean_text}")
         elif style_type == "TITLE":
             lines.append(f"# {clean_text}")

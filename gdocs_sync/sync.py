@@ -1,12 +1,13 @@
-import os
 import difflib
-from typing import List, Dict, Any, Tuple
-from .config import SyncConfig, DocumentMapping
+import os
+from typing import Any
+
 from .client import GoogleDocsClient
+from .config import DocumentMapping, SyncConfig
 from .parser import doc_to_markdown
 
-class SyncManager:
 
+class SyncManager:
     def __init__(self, config: SyncConfig, client: GoogleDocsClient, base_dir: str = "."):
         self.config = config
         self.client = client
@@ -15,7 +16,7 @@ class SyncManager:
     def resolve_path(self, rel_path: str) -> str:
         return os.path.join(self.base_dir, rel_path)
 
-    def status(self) -> List[Dict[str, Any]]:
+    def status(self) -> list[dict[str, Any]]:
         results = []
         for doc in self.config.documents:
             local_path = self.resolve_path(doc.file)
@@ -28,16 +29,18 @@ class SyncManager:
             except Exception as e:
                 remote_meta = {"error": str(e)}
 
-            results.append({
-                "doc": doc,
-                "local_path": local_path,
-                "local_exists": local_exists,
-                "local_mtime": local_mtime,
-                "remote_meta": remote_meta
-            })
+            results.append(
+                {
+                    "doc": doc,
+                    "local_path": local_path,
+                    "local_exists": local_exists,
+                    "local_mtime": local_mtime,
+                    "remote_meta": remote_meta,
+                }
+            )
         return results
 
-    def pull(self, write: bool = True) -> List[Tuple[DocumentMapping, str, bool]]:
+    def pull(self, write: bool = True) -> list[tuple[DocumentMapping, str, bool]]:
         pulled = []
         for doc in self.config.documents:
             doc_data = self.client.get_document(doc.doc_id)
@@ -46,9 +49,9 @@ class SyncManager:
             local_path = self.resolve_path(doc.file)
             changed = True
             if os.path.isfile(local_path):
-                with open(local_path, "r", encoding="utf-8") as f:
+                with open(local_path, encoding="utf-8") as f:
                     existing = f.read()
-                changed = (existing != md_content)
+                changed = existing != md_content
 
             if write and changed:
                 os.makedirs(os.path.dirname(local_path), exist_ok=True)
@@ -58,7 +61,7 @@ class SyncManager:
             pulled.append((doc, md_content, changed))
         return pulled
 
-    def diff(self) -> Dict[str, str]:
+    def diff(self) -> dict[str, str]:
         diffs = {}
         for doc in self.config.documents:
             doc_data = self.client.get_document(doc.doc_id)
@@ -67,15 +70,17 @@ class SyncManager:
             local_path = self.resolve_path(doc.file)
             local_content = ""
             if os.path.isfile(local_path):
-                with open(local_path, "r", encoding="utf-8") as f:
+                with open(local_path, encoding="utf-8") as f:
                     local_content = f.read()
 
-            diff_lines = list(difflib.unified_diff(
-                local_content.splitlines(keepends=True),
-                remote_md.splitlines(keepends=True),
-                fromfile=f"a/{doc.file} (local Git)",
-                tofile=f"b/{doc.file} (Google Docs)"
-            ))
+            diff_lines = list(
+                difflib.unified_diff(
+                    local_content.splitlines(keepends=True),
+                    remote_md.splitlines(keepends=True),
+                    fromfile=f"a/{doc.file} (local Git)",
+                    tofile=f"b/{doc.file} (Google Docs)",
+                )
+            )
 
             if diff_lines:
                 diffs[doc.file] = "".join(diff_lines)

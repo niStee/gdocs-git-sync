@@ -1,21 +1,21 @@
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import os
-import unittest
 import tempfile
+import unittest
 from unittest.mock import MagicMock
-from gdocs_sync.config import SyncConfig, DocumentMapping
+
+from gdocs_sync.config import DocumentMapping, SyncConfig
 from gdocs_sync.sync import SyncManager
 
-class TestSyncManager(unittest.TestCase):
 
+class TestSyncManager(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
         self.doc_mapping = DocumentMapping(
-            file="test_doc.md",
-            doc_id="mock-123",
-            title="Mock Document"
+            file="test_doc.md", doc_id="mock-123", title="Mock Document"
         )
         self.config = SyncConfig(documents=[self.doc_mapping])
         self.mock_client = MagicMock()
@@ -36,11 +36,11 @@ class TestSyncManager(unittest.TestCase):
                     {
                         "paragraph": {
                             "paragraphStyle": {"namedStyleType": "HEADING_1"},
-                            "elements": [{"textRun": {"content": "Hello World\n"}}]
+                            "elements": [{"textRun": {"content": "Hello World\n"}}],
                         }
                     }
                 ]
-            }
+            },
         }
         self.mock_client.get_document.return_value = mock_doc_data
 
@@ -54,8 +54,9 @@ class TestSyncManager(unittest.TestCase):
 
         written_file = os.path.join(self.temp_dir, "test_doc.md")
         self.assertTrue(os.path.isfile(written_file))
-        with open(written_file, "r") as f:
+        with open(written_file) as f:
             self.assertEqual(f.read().strip(), "# Hello World")
+
 
 if __name__ == "__main__":
     unittest.main()
