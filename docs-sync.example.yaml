@@ -1,0 +1,9 @@
+# Example configuration for gdocs-git-sync
+documents:
+  - file: "policy/foss-sustainability-motion.md"
+    doc_id: "1HkhevBBy-TXIHW9qER6O-MAjqvveQygmYKnAoSsUHKs"
+    title: "Volt FOSS Sustainability & Upstream Retainer Policy (RFC Draft)"
+
+  - file: "policy/digitales/01-digitale-infrastruktur.md"
+    doc_id: "1wZ-igWfzspb3FzhmrSuXxFPvXrF7CUsB5IbQ15JHCSQ"
+    title: "Digitale Infrastruktur als Daseinsvorsorge (LTW27)"
