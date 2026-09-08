@@ -24,4 +24,7 @@ ruff check . --fix
 - mirror: Codeberg (codeberg.org/niStee/gdocs-git-sync) — automated push mirror via
   .github/workflows/mirror-codeberg.yml; receives main + tags only
 - never push directly to main; never push to Codeberg directly
-- mirror repair path: re-run the workflow (workflow_dispatch), not local pushes
+- tags are immutable once pushed; never rewrite or delete a mirrored tag
+- mirror repair path: re-run the workflow (workflow_dispatch), not local
+  pushes
+- operations runbook: niStee/network-infra → codeberg-github-migration.md
