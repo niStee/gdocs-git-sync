@@ -8,3 +8,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # init and analyze of github/codeql-action must move together; split PRs
+    # fail individually. One weekly group for all actions.
+    groups:
+      github-actions:
+        patterns: ["*"]
